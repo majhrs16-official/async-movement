@@ -1,0 +1,31 @@
+// Root project is only a hub. It deliberately contains no mod code.
+plugins {
+    id 'base'
+}
+
+allprojects {
+    group = rootProject.property('maven_group')
+    version = rootProject.property('mod_version')
+}
+
+subprojects {
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+    }
+}
+
+tasks.register('buildAll') {
+    group = 'build'
+    description = 'Builds the common module and every Minecraft version module.'
+    dependsOn subprojects.findAll { it.name.startsWith('mc') }.collect { "${it.path}:build" }
+}
+
+tasks.register('collectJars', Copy) {
+    group = 'build'
+    description = 'Copies every version jar into build/jars.'
+    dependsOn 'buildAll'
+    from(subprojects.findAll { it.name.startsWith('mc') }.collect { rootProject.file("src/${it.name}/build/libs") })
+    include '*.jar'
+    exclude '*-sources.jar', '*-dev.jar'
+    into layout.buildDirectory.dir('jars')
+}

@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.majhrs16.am.mixin",
+  "compatibilityLevel": "${mixin_compat}",
+  "refmap": "${mixin_refmap}",
+  "client": [
+    "MouseHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

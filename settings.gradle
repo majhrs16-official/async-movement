@@ -1,0 +1,39 @@
+pluginManagement {
+    repositories {
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'async-movement'
+
+def versionModules = [
+        'mc1_16_5',
+        'mc1_17_1',
+        'mc1_18_2',
+        'mc1_19_2',
+        'mc1_19_4',
+        'mc1_20_1',
+        'mc1_20_4',
+        'mc1_20_6',
+        'mc1_21_1',
+        'mc1_21_4',
+        'mc1_21_5',
+        'mc1_21_8',
+        'mc1_21_10',
+        'mc1_21_11',
+        'mc26_1',
+        'mc26_2',
+        'mc26_3'
+]
+
+include 'common'
+project(':common').projectDir = file('src/common')
+versionModules.each { name ->
+    include name
+    project(":${name}").projectDir = file("src/${name}")
+}

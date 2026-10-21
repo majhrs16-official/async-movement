@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "asyncmovement",
+  "version": "${mod_version}",
+  "name": "Async Movement",
+  "description": "Polls keyboard, mouse-button and cursor state at a fixed, configurable rate on a separate thread. Camera capture is available on Windows/Linux GLFW versions with Raw Mouse Input disabled; macOS and 26.3 keep the vanilla camera. Rendering is never touched.",
+  "authors": [
+    "Majhrs16"
+  ],
+  "contact": {},
+  "license": "GPL-3.0",
+  "environment": "client",
+  "mixins": [],
+  "entrypoints": {
+    "client": [
+      "me.majhrs16.am.AsyncMovement"
+    ]
+  },
+  "depends": {
+    "fabricloader": "${loader_range}",
+    "minecraft": "${minecraft_range}",
+    "java": ">=${java_range}",
+    "fabric-api": "*"
+  }
+}

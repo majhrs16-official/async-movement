@@ -1,0 +1,129 @@
+// Shared configuration for every Minecraft version module.
+// Modules define these properties before applying this script:
+//   minecraftVersion, javaVersion, fabricApiVersion, minecraftRange,
+//   javaRange, loaderRange, inputBackend ("long" / "window" / "sdl"),
+//   keybindBackend ("binding" / "mapping")
+
+def mcVersion = project.ext.minecraftVersion
+def javaVersion = project.ext.javaVersion as int
+def cameraBackend = project.ext.cameraBackend ?: 'none'
+def remapMixin = !mcVersion.startsWith('26.')
+def mixinCompat = javaVersion <= 8 ? 'JAVA_8'
+        : javaVersion <= 16 ? 'JAVA_16'
+        : javaVersion <= 17 ? 'JAVA_17'
+        : javaVersion <= 21 ? 'JAVA_21'
+        : 'JAVA_25'
+def mixinRefmap = remapMixin ? 'asyncmovement-refmap.json' : ''
+def mixinList = cameraBackend == 'none' ? '[]' : '["asyncmovement.mixins.json"]'
+
+version = "${rootProject.property('mod_version')}+mc${mcVersion}"
+base {
+    archivesName = "asyncmovement-${mcVersion}"
+}
+
+if (remapMixin) {
+    loom {
+        mixin {
+            useLegacyMixinAp = true
+            defaultRefmapName = 'asyncmovement-refmap.json'
+            add sourceSets.main
+        }
+    }
+}
+
+sourceSets {
+    main {
+        def javaDirs = [
+                'java',
+                rootProject.file('src/version-shared/java'),
+                rootProject.file("src/version-shared-keys-${project.ext.inputBackend}/java"),
+                rootProject.file("src/version-shared-keybind-${project.ext.keybindBackend}/java")
+        ]
+        def resourceDirs = ['resources', rootProject.file('src/version-shared/resources')]
+        if (cameraBackend != 'none') {
+            javaDirs.add(rootProject.file("src/version-shared-camera-${cameraBackend}/java"))
+            resourceDirs.add(rootProject.file("src/version-shared-camera-${cameraBackend}/resources"))
+        }
+        java.srcDirs = javaDirs
+        resources.srcDirs = resourceDirs
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${mcVersion}"
+    if (!mcVersion.startsWith('26.')) {
+        mappings loom.officialMojangMappings()
+    }
+
+    if (mcVersion.startsWith('26.')) {
+        // 26.x ships deobfuscated, so the non-remapping Loom plugin uses the
+        // normal Java configurations instead of modImplementation.
+        implementation "net.fabricmc:fabric-loader:${rootProject.property('loader_version')}"
+        implementation "net.fabricmc.fabric-api:fabric-api:${project.ext.fabricApiVersion}"
+    } else {
+        modImplementation "net.fabricmc:fabric-loader:${rootProject.property('loader_version')}"
+        modImplementation "net.fabricmc.fabric-api:fabric-api:${project.ext.fabricApiVersion}"
+    }
+
+    implementation project(':common')
+    // Fabric Loader provides SLF4J at runtime; it is only needed at compile time.
+    compileOnly 'org.slf4j:slf4j-api:2.0.9'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = javaVersion
+}
+
+java {
+    sourceCompatibility = JavaVersion.toVersion(javaVersion)
+    targetCompatibility = JavaVersion.toVersion(javaVersion)
+    withSourcesJar()
+}
+
+processResources {
+    inputs.property 'mod_version', project.version
+    inputs.property 'minecraft_range', project.ext.minecraftRange
+    inputs.property 'java_range', project.ext.javaRange
+    inputs.property 'loader_range', project.ext.loaderRange
+    inputs.property 'mixins', mixinList
+    inputs.property 'mixin_compat', mixinCompat
+    inputs.property 'mixin_refmap', mixinRefmap
+
+    filesMatching('fabric.mod.json') {
+        expand(
+                mod_version: project.version,
+                minecraft_range: project.ext.minecraftRange,
+                java_range: project.ext.javaRange,
+                loader_range: project.ext.loaderRange
+        )
+    }
+    // Keep the source fabric.mod.json valid JSON for Loom's metadata parser,
+    // then replace the empty mixin array with the module-specific list. The
+    // deobfuscated 26.x modules do not need a refmap, so the empty refmap line
+    // is removed there instead of pointing at a file that will not exist.
+    filter { line ->
+        def result = line.replace('"mixins": []', '"mixins": ' + mixinList)
+        if (!remapMixin && result.trim().startsWith('"refmap"')) {
+            return ''
+        }
+        return result
+    }
+    filesMatching('asyncmovement.mixins.json') {
+        expand(
+                mixin_compat: mixinCompat,
+                mixin_refmap: mixinRefmap
+        )
+    }
+}
+
+jar {
+    dependsOn ':common:classes'
+    from rootProject.file('LICENSE')
+    from rootProject.file('src/common/build/classes/java/main')
+    from rootProject.file('src/common/build/resources/main')
+}

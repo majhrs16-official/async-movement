@@ -1,0 +1,20 @@
+plugins {
+    id 'java-library'
+}
+
+version = rootProject.property('mod_version')
+base {
+    archivesName = 'asyncmovement-common'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    // The common module must stay consumable by the 1.16.5 module.
+    options.release = 8
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    withSourcesJar()
+}

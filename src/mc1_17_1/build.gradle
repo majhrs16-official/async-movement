@@ -1,0 +1,17 @@
+plugins {
+    id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
+}
+
+ext {
+    minecraftVersion = '1.17.1'
+    javaVersion = 16
+    fabricApiVersion = '0.46.1+1.17'
+    minecraftRange = '>=1.17.1 <1.18'
+    javaRange = '16'
+    keybindBackend = 'binding'
+    inputBackend = 'long'
+    cameraBackend = 'legacy'
+    loaderRange = '>=0.15.7'
+}
+
+apply from: rootProject.file('gradle/version-module.gradle')

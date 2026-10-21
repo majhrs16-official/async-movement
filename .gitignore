@@ -1,0 +1,38 @@
+# Gradle and build outputs
+.gradle/
+build/
+**/build/
+run/
+**/run/
+.fabric/
+
+# Java artifacts
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+!am-1.1.jar
+*.log
+hs_err_pid*
+replay_pid*
+*.hprof
+
+# IDEs and editors
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+.vscode/
+.classpath
+.project
+.settings/
+bin/
+
+# Local configuration and secrets
+local.properties
+.env
+.env.*
+
+# Operating system files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,17 @@
+plugins {
+    id 'net.fabricmc.fabric-loom' version "${loom_version}"
+}
+
+ext {
+    minecraftVersion = '26.3'
+    javaVersion = 25
+    fabricApiVersion = '0.163.0+26.3'
+    minecraftRange = '>=26.3 <26.4'
+    javaRange = '25'
+    keybindBackend = 'mapping'
+    inputBackend = 'sdl'
+    cameraBackend = 'none'
+    loaderRange = '>=0.19.5'
+}
+
+apply from: rootProject.file('gradle/version-module.gradle')
