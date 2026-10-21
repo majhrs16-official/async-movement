@@ -10,7 +10,7 @@ run/
 *.class
 *.jar
 !gradle/wrapper/gradle-wrapper.jar
-!am-1.1.jar
+!backup/am-1.1.jar
 *.log
 hs_err_pid*
 replay_pid*
