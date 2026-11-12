@@ -55,6 +55,12 @@ public final class LongWindowKeySource implements KeyStateSource {
 
     @Override
     public boolean isDown(int key) {
+        // GLFW only accepts GLFW_KEY_SPACE..GLFW_KEY_LAST. Querying the
+        // lower key codes raises GLFW_INVALID_ENUM; Minecraft's error
+        // callback then asserts the render thread and can kill the poller.
+        if (key < GLFW.GLFW_KEY_SPACE || key > GLFW.GLFW_KEY_LAST) {
+            return false;
+        }
         return InputConstants.isKeyDown(windowHandle, key);
     }
 
