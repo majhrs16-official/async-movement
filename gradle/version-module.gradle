@@ -74,8 +74,6 @@ dependencies {
     }
 
     implementation project(':common')
-    // Fabric Loader provides SLF4J at runtime; it is only needed at compile time.
-    compileOnly 'org.slf4j:slf4j-api:2.0.9'
 }
 
 tasks.withType(JavaCompile).configureEach {

@@ -11,7 +11,6 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 
@@ -25,7 +24,7 @@ public abstract class AbstractAsyncMovementClient implements ClientModInitialize
     public static final String MOD_ID = "asyncmovement";
     public static final String MOD_NAME = "Async Movement";
 
-    protected static final Log LOG = new Slf4jLog(LoggerFactory.getLogger(MOD_ID));
+    protected static final Log LOG = new Log4jLog(MOD_ID);
 
     private Config config;
     private AsyncMovementCore core;

@@ -1,14 +1,20 @@
 package me.majhrs16.am.shared;
 
 import me.majhrs16.am.common.Log;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-public final class Slf4jLog implements Log {
+/**
+ * Logging adapter backed by Log4j, which Minecraft always provides. This avoids
+ * a hard runtime dependency on SLF4J, since some launchers do not put it on the
+ * game classpath.
+ */
+public final class Log4jLog implements Log {
 
     private final Logger logger;
 
-    public Slf4jLog(Logger logger) {
-        this.logger = logger;
+    public Log4jLog(String name) {
+        this.logger = LogManager.getLogger(name);
     }
 
     @Override
